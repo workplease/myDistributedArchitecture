@@ -15,6 +15,8 @@ import java.util.Date;
  * @Author: milkteazzz
  * @Data: 2020-12-06 11:52
  * @Version: 1.0
+ *
+ * 对日期类进行反序列化
  */
 public class FDateJsonDeserializer extends JsonDeserializer<Date> {
 

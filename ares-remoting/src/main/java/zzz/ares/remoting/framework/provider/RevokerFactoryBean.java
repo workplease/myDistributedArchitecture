@@ -1,7 +1,17 @@
 package zzz.ares.remoting.framework.provider;
 
+import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import zzz.ares.remoting.framework.model.InvokerService;
+import zzz.ares.remoting.framework.model.ProviderService;
+import zzz.ares.remoting.framework.revoker.NettyChannelPoolFactory;
+import zzz.ares.remoting.framework.revoker.RevokerProxyBeanFactory;
+import zzz.ares.remoting.framework.zookeeper.IRegisterCenter4Invoker;
+import zzz.ares.remoting.framework.zookeeper.RegisterCenter;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: milkteazzz
@@ -43,6 +53,76 @@ public class RevokerFactoryBean implements FactoryBean, InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         //获取服务注册中心
+        IRegisterCenter4Invoker registerCenter4Consumer = RegisterCenter.singleton();
+        //初始化服务提供者列表到本地缓存
+        registerCenter4Consumer.initProviderMap(remoteAppKey,groupName);
 
+        //初始化 Netty Channel
+        Map<String, List<ProviderService>> providerMap =
+                registerCenter4Consumer.getServiceMetaDataMap4Consume();
+        if (MapUtils.isEmpty(providerMap)){
+            throw new RuntimeException("service provider list is empty.");
+        }
+
+        NettyChannelPoolFactory.channelPoolFactoryInstance().initChannelPoolFactory(providerMap);
+        //获取服务提供者代理对象
+        RevokerProxyBeanFactory proxyFactory =
+                RevokerProxyBeanFactory.singleton(targetInterface,timeout,clusterStrategy);
+        this.serviceObject = proxyFactory.getProxy();
+
+        //将消费者信息注册到注册中心
+        InvokerService invoker = new InvokerService();
+        invoker.setServiceItf(targetInterface);
+        invoker.setRemoteAppKey(remoteAppKey);
+        invoker.setGroupName(groupName);
+        registerCenter4Consumer.registerInvoker(invoker);
+    }
+
+    public Class<?> getTargetInterface() {
+        return targetInterface;
+    }
+
+    public void setTargetInterface(Class<?> targetInterface) {
+        this.targetInterface = targetInterface;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
+
+    public Object getServiceObject() {
+        return serviceObject;
+    }
+
+    public void setServiceObject(Object serviceObject) {
+        this.serviceObject = serviceObject;
+    }
+
+    public String getClusterStrategy() {
+        return clusterStrategy;
+    }
+
+    public void setClusterStrategy(String clusterStrategy) {
+        this.clusterStrategy = clusterStrategy;
+    }
+
+    public String getRemoteAppKey() {
+        return remoteAppKey;
+    }
+
+    public void setRemoteAppKey(String remoteAppKey) {
+        this.remoteAppKey = remoteAppKey;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 }

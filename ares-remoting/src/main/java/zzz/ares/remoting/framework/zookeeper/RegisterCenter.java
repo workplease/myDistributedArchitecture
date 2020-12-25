@@ -12,6 +12,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import zzz.ares.remoting.framework.helper.IPHelper;
 import zzz.ares.remoting.framework.helper.PropertyConfigHelper;
 import zzz.ares.remoting.framework.model.InvokerService;
 import zzz.ares.remoting.framework.model.ProviderService;
@@ -33,7 +34,8 @@ public class RegisterCenter implements IRegisterCenter4Invoker, IRegisterCenter4
     //服务提供者列表,Key:服务提供者接口  value:服务提供者服务方法列表
     private static final Map<String, List<ProviderService>> providerServiceMap = Maps.newConcurrentMap();
     //服务端ZK服务元信息,选择服务(第一次直接从ZK拉取,后续由ZK的监听机制主动更新)
-    private static final Map<String, List<ProviderService>> serviceMetaDataMap4Consume = com.google.common.collect.Maps.newConcurrentMap();
+    private static final Map<String, List<ProviderService>> serviceMetaDataMap4Consume =
+            com.google.common.collect.Maps.newConcurrentMap();
 
     private static String ZK_SERVICE = PropertyConfigHelper.getZkService();
     private static int ZK_SESSION_TIME_OUT = PropertyConfigHelper.getZkConnectionTimeout();
@@ -71,7 +73,8 @@ public class RegisterCenter implements IRegisterCenter4Invoker, IRegisterCenter4
             }
 
             if (zkClient == null) {
-                zkClient = new ZkClient(ZK_SERVICE, ZK_SESSION_TIME_OUT, ZK_CONNECTION_TIME_OUT, new SerializableSerializer());
+                zkClient = new ZkClient(ZK_SERVICE, ZK_SESSION_TIME_OUT, ZK_CONNECTION_TIME_OUT,
+                        new SerializableSerializer());
             }
 
             //创建 ZK命名空间/当前部署应用APP命名空间/
@@ -163,7 +166,6 @@ public class RegisterCenter implements IRegisterCenter4Invoker, IRegisterCenter4
             if (!exist) {
                 zkClient.createPersistent(ROOT_PATH, true);
             }
-
 
             //创建服务消费者节点
             String remoteAppKey = invoker.getRemoteAppKey();

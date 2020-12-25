@@ -15,10 +15,10 @@ import zzz.ares.remoting.framework.provider.RevokerFactoryBean;
  *
  * 解析远程服务引入的自定义标签类
  */
-public class RevokerFactoryBeanDefinitionParer extends AbstractSingleBeanDefinitionParser {
+public class RevokerFactoryBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     //logger
-    private static final Logger logger = LoggerFactory.getLogger(RevokerFactoryBeanDefinitionParer.class);
+    private static final Logger logger = LoggerFactory.getLogger(RevokerFactoryBeanDefinitionParser.class);
 
     protected Class getBeanClass(Element element){
         return RevokerFactoryBean.class;

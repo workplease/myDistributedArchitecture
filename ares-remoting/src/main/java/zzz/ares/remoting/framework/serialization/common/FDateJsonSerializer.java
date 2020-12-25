@@ -13,6 +13,8 @@ import java.util.Date;
  * @Author: milkteazzz
  * @Data: 2020-12-06 11:56
  * @Version: 1.0
+ *
+ * 对日期类进行序列化
  */
 public class FDateJsonSerializer extends JsonSerializer<Date> {
     @Override

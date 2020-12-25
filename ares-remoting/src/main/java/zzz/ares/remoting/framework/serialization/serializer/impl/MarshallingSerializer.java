@@ -8,8 +8,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * @author liyebing created on 17/3/31.
- * @version $Id$
+ * @Author: milkteazzz
+ * @Data: 2020-12-11 15:08
+ * @Version: 1.0
+ *
+ * JBoss Marshalling 实现序列化/反序列化
  */
 public class MarshallingSerializer implements ISerializer {
 
@@ -49,6 +52,4 @@ public class MarshallingSerializer implements ISerializer {
         }
         return null;
     }
-
-
 }

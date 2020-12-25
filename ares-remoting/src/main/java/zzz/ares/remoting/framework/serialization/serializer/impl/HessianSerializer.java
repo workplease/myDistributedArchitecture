@@ -8,16 +8,17 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 /**
- * @author liyebing created on 17/1/21.
- * @version $Id$
+ * @Author: milkteazzz
+ * @Data: 2020-12-11 15:08
+ * @Version: 1.0
+ *
+ * Hessian 实现序列化/反序列化
  */
 public class HessianSerializer implements ISerializer {
-
 
     public byte[] serialize(Object obj) {
         if (obj == null)
             throw new NullPointerException();
-
         try {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             HessianOutput ho = new HessianOutput(os);
@@ -31,7 +32,6 @@ public class HessianSerializer implements ISerializer {
     public <T> T deserialize(byte[] data, Class<T> clazz) {
         if (data == null)
             throw new NullPointerException();
-
         try {
             ByteArrayInputStream is = new ByteArrayInputStream(data);
             HessianInput hi = new HessianInput(is);
@@ -39,8 +39,5 @@ public class HessianSerializer implements ISerializer {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
-
-
 }

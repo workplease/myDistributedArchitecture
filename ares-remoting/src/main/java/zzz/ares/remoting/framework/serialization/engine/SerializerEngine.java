@@ -11,6 +11,8 @@ import java.util.Map;
  * @Author: milkteazzz
  * @Data: 2020-12-06 11:21
  * @Version: 1.0
+ *
+ * 通用的序列化工具引擎
  */
 public class SerializerEngine {
 

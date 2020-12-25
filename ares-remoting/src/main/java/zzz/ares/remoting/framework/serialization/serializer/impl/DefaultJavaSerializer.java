@@ -8,13 +8,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * java默认序列化
+ * @Author: milkteazzz
+ * @Data: 2020-12-11 15:08
+ * @Version: 1.0
  *
- * @author liyebing created on 17/1/21.
- * @version $Id$
+ * java默认序列化
  */
 public class DefaultJavaSerializer implements ISerializer {
-
 
     public <T> byte[] serialize(T obj) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -29,7 +29,7 @@ public class DefaultJavaSerializer implements ISerializer {
         return byteArrayOutputStream.toByteArray();
     }
 
-
+    @SuppressWarnings("unchecked")
     public <T> T deserialize(byte[] data, Class<T> clazz) {
 
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);

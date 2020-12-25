@@ -10,14 +10,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author liyebing created on 17/1/19.
- * @version $Id$
+ * @Author: milkteazzz
+ * @Data: 2020-12-11 15:08
+ * @Version: 1.0
+ *
+ * protostuff 实现序列化/反序列化
  */
 public class ProtoStuffSerializer implements ISerializer {
 
-
     private static Map<Class<?>, Schema<?>> cachedSchema = new ConcurrentHashMap<Class<?>, Schema<?>>();
-
 
     @SuppressWarnings("unchecked")
     private static <T> Schema<T> getSchema(Class<T> cls) {
@@ -53,6 +54,4 @@ public class ProtoStuffSerializer implements ISerializer {
             throw new RuntimeException(e);
         }
     }
-
-
 }

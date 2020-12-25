@@ -11,6 +11,8 @@ import java.net.Socket;
  * @Author: milkteazzz
  * @Data: 2020-12-05 20:34
  * @Version: 1.0
+ *
+ * 服务消费者代理类
  */
 public class ConsumerProxy {
 

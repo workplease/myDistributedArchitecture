@@ -13,8 +13,11 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import java.util.Date;
 
 /**
- * @author liyebing created on 17/1/21.
- * @version $Id$
+ * @Author: milkteazzz
+ * @Data: 2020-12-11 15:08
+ * @Version: 1.0
+ *
+ * 使用 Jackson 实现 JSON 序列化/反序列化
  */
 public class JSONSerializer implements ISerializer {
 
@@ -41,12 +44,10 @@ public class JSONSerializer implements ISerializer {
         return objectMapper;
     }
 
-
     public <T> byte[] serialize(T obj) {
         if (obj == null) {
             return new byte[0];
         }
-
         try {
             String json = objectMapper.writeValueAsString(obj);
             return json.getBytes();
@@ -54,7 +55,6 @@ public class JSONSerializer implements ISerializer {
             throw new RuntimeException(e);
         }
     }
-
 
     public <T> T deserialize(byte[] data, Class<T> clazz) {
         String json = new String(data);

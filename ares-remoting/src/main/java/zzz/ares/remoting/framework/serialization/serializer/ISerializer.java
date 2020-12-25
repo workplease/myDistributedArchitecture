@@ -1,8 +1,11 @@
 package zzz.ares.remoting.framework.serialization.serializer;
 
 /**
- * @author liyebing created on 17/4/23.
- * @version $Id$
+ * @Author: milkteazzz
+ * @Data: 2020-12-11 15:08
+ * @Version: 1.0
+ *
+ * 序列化/反序列化通用接口
  */
 public interface ISerializer {
 
