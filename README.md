@@ -228,3 +228,94 @@ JBoss Marshalling 是一个 Java 对象序列化包，兼容 Java 原生的序�
 - SerializeType：序列化类型枚举
 - SerializerEngine：通用的序列化工具引擎
 
+### 4.实现分布式服务框架服务的发布与引入：
+
+1）FactoryBean 原理：
+
+鉴于 Spring 在 Java 企业级开发中的地位，我们希望分布式服务框架能够与 Spring 无缝地集成，远程服务的发布与引入与本地服务的发布与引入对于开发人员的编程界面能够保持一致。
+
+实现原理是 Spring 通过反射机制利用 Bean 的 class 实例化 Bean，在某些情况下，实例化 Bean 过程如果涉及复杂的业务逻辑，通过 XML 配置或者注解的方式实例化这样一个对象很难实现或者实现起来不够灵活。这个时候，通过 org.springframework.beans.factory.FactoryBean 接口，采用编码的方式来实例化一个 Bean，将实例化 Bean 相关的复杂业务逻辑通过编码在方法 org.springframework.beans.factory.FactoryBean 的 getObject 来实现。
+
+2）Spring 框架对于已有 RPC 框架集成的支持：
+
+Spring 对常见的 RPC 框架提供了相应的集成支持，统一标准化了 RPC 服务发布与引入编程模型，简化了 RPC 服务及调用的开发流程。目前 Spring 主要支持如下的远程调用技术：
+
+- Remote Method Invocation（RMI）：通过类 RmiProxyFactoryBean 与类 RmiServiceExporter 分别完成 RMI 服务的引入与发布。
+- HTTP Invoker：Spring 提供的一种远程调用技术，使用 Java 内置的序列化算法，以及通过 HTTP 协议进行数据的传输。相应的支持类是 HttpInvokerProxyFactoryBean 和 HttpInvokerServiceExporter。与 RMI 的相同点在于数据序列化算法相同，都是采用 Java 内置的序列化算法。不同点在于 RMI 传输协议为 TCP/IP 协议，而 HTTPInvoker 为 HTTP 协议。HTTP 协议传输性能低于 TCP/IP 协议，但是不会被防火墙拦截。
+- Hessian：Hessian 是一个轻量级的 Web 服务实现工具，它采用的是二进制协议，因此很适合发送二进制数据。它的一个基本原理就是把远程服务对象以二进制的方式进行接收和发送。Spring 通过 HessianProxyFactoryBean 和 HessianServiceExporter 来完成基于 Hessian 序列化协议的服务的引入与发布。
+- JAX-WS：Spring 通过 JAX-WS 提供对 WS 服务的支持。类似地提供了相应的支持类 JaxWsProxyFactoryBean 与 SimpleJaxWsServiceExporter 来完成 WS 服务的引入与发布。
+- JMS：相应的支持类为 JmsInvokerProxyFactoryBean 与 JmsInvokerServiceExpoter。
+
+3）基于 RmiProxyFactoryBean 实现 RMI 与 Spring 的集成：
+
+Spring 通过 org.springframework.remoting.rmi.RmiProxyFactoryBean 引入 RMI 服务，通过 org.springframework.remoting.rmi.RmiServiceExporter 暴露 RMI 服务，屏蔽掉了 RMI 开发的复杂性，对比 RMI 原生开发，不用关心服务端 Skeleton 和客户端 Stub 等的处理细节，其远程服务接口与实现类甚至可以不用实现 java.rmi.Remote 接口与继承类 java.rmi.server.UnicastRemoteObject。
+
+4）基于 HttpInvokerProxyFactoryBean 实现 HTTP Invoker 与 Spring 的集成：
+
+HTTP Invoker 作为 Spring 提供的一种新的 RPC 解决方案，其目的是为了填补 RMI 服务与基于 HTTP 服务（如 Hessian 等）之间的空白。因为 RMI 服务容易被防火墙拦截，Hessian 的序列化协议是私有协议。而 HTTP Invoker 采用与 RMI 相同的序列化协议（Java 内置序列化协议），传输采用 HTTP 协议，可以不被防火墙拦截。
+
+5）基于 HessianProxyFactoryBean 实现 Hessian 与 Spring  的集成：
+
+Hessian 是一个轻量级的 remoting onhttp 工具，相比 WebService，Hessian 更简单、快捷。采用的是二进制 RPC 协议，因为采用的是二进制协议，所以它很适合发送二进制数据。
+
+6）实现自定义服务框架与 Spring 的集成思路：
+
+服务的发布与引入通过 Spring 管理，进而远程服务发布 Bean 与远程服务引入 Bean 通过 Spring IOC 容器管理，由 Spring 管理其生命周期。实现了远程服务调用编程界面与本地 Bean 方法调用的一致性，屏蔽了远程服务调用与本地方法调用的差异性。
+
+7）实现远程服务的发布：
+
+远程服务的发布需要如下操作：
+
+- 启动 Netty 服务端
+- 启动 Zookeeper 服务端，将服务提供者属性信息注册到服务注册中心
+
+远程服务发布相对应的属性包括如下：
+
+- 服务接口 class（serviceItf）：用于注册在服务注册中心，服务调用端获取后遇换成在本地缓存，用于发起服务调用
+- 服务实现 Bean（serviceObject）：用于服务调用
+- 服务启动端口（serverPort）：对外发布服务作为 Netty 服务端端口
+- 服务端服务超时时间（timeout）：用于控制服务端运行超时时间
+- 服务提供者唯一标识（appKey）：唯一标识服务所在应用，作为 Zookeeper 服务注册路径中的子路径，用于该应用所有服务的一个命名空间
+- 服务分组组名（groupName）：用于分组灰度发布，比如某个服务 A，通过配置不同的分组组名，可以使得调用端发起的调用只路由到与其配置的分组组名相同的服务提供者机器组上
+- 服务提供者权重（weight）：配置该机器对外发布的服务在集群中的权重，用于软负载相关的权重算法实现
+- 服务端线程数（workerThreads）：限制服务端该服务运行线程数，用于实现资源的隔离与服务端限流
+
+我们主要做了两件事：
+
+- 调用 NettyServer.singleton().start() 方法来启动 Netty 服务端，将服务对外发布出去，使其能够接受外部其他机器的调用请求
+- 将服务信息写入 Zookeeper，保存在服务注册中心，方法 buildProviderServiceInfos() 将服务接口按照方法的粒度拆分，获得服务方法粒度的服务列表 List<ProviderService\>，然后通过调用注册中心的方法 registerCenter4Provider.registerProvider() 完成服务端信息的注册
+
+8）实现远程服务的引入：
+
+引入远程服务需要做的操作如下：
+
+- 通过注册中心，将服务提供者信息获取到本地缓存列表
+- 初始化 Netty 连接池
+- 获取服务提供者代理对象
+- 将服务消费者信息注册到注册中心
+
+远程服务引入相对应的属性包括如下：
+
+- 服务接口 class（targetInterface）：用来匹配从服务注册中心获取到本地缓存的服务提供者，得到匹配服务接口的服务提供者列表，再依据软负载策略选取某一个服务提供者，发起调用
+- 超时时间（timeout）：服务调用超时时间，超过所设置的时间之后，调用方不再等待服务方返回结果，直接返回给调用方
+- 服务 Bean（serviceObject）：远程服务生成的调用方法本地代理对象，可以看作调用方 Stub
+- 负载均衡策略（clusterStrategy）：用于配置服务调用方法软负载策略，一般包括随机策略、加权随机策略、轮询策略、加权轮询策略、源地址 hash 策略等负载算法
+- 服务提供者唯一标识（remoteAppKey）：与服务发布配置的 appKey 保持一致
+- 服务分组组名（groupName）：与服务发布配置的 groupName 保持一致，用于实现同一个服务分组功能
+
+主要做了四件事情：
+
+- 通过方法 registerCenter4Consumer.initProviderMap() 从服务注册中心获取服务提供者信息到本地缓存
+- 通过方法 NettyChannelPoolFactory.channelPoolFactoryInstance().initChannelPoolFactory 根据服务提供者信息初始化 Netty Channel 连接池，通过连接池可以做到 Channel 长连接复用，有利于提高服务调用性能
+- 通过方法 RevokerProxyBeanFactory.singleton() 获取 RevokerProxyBeanFactory 服务提供者代理对象
+- 通过方法 registerCenter4Consumer.registerInvoker 将服务调用者信息注册到 Zookeeper 服务注册中心，为此服务治理功能做数据准备
+
+9）相关的类：
+
+- ProviderFactoryBean：实现远程服务的发布
+- RevokerFactoryBean：实现远程服务的引入
+- AreaRemoteServiceNamespaceHandler：为远程服务发布自定义标签处理类
+- AresRemoteReferenceNamespaceHandler：解析自定义标签的工具类
+- ProviderFactoryBeanDefinitionParser：解析服务发布自定义标签
+- RevokerFactoryBeanDefinitionParser：解析远程服务引入的自定义标签类
+
