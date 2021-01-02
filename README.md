@@ -380,6 +380,8 @@ Hessian 是一个轻量级的 remoting onhttp 工具，相比 WebService，Hessi
 - 方法 initProviderMap(String remoteAppKey, String groupName) 完成初始化服务调用方本地缓存 serviceMetaDataMap4Consume 的功能
 - 方法 registerInvoker(InvokerService invoker) 完成服务调用方注册服务中心的功能，实现思路与之前服务提供方类似
 
+### 6. 分布式服务框架底层通信实现：
+
 1）Linux 下实现的 I/O 模型：
 
 先理清阻塞、非阻塞、同步、异步这4个概念：
