@@ -12,6 +12,8 @@ import java.util.List;
  * @Author: milkteazzz
  * @Data: 2020-12-11 15:08
  * @Version: 1.0
+ *
+ * 解码器
  */
 public class NettyDecoderHandler extends ByteToMessageDecoder {
 

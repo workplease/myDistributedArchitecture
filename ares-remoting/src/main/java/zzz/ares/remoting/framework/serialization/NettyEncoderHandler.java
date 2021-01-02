@@ -10,6 +10,8 @@ import zzz.ares.remoting.framework.serialization.engine.SerializerEngine;
  * @Author: milkteazzz
  * @Data: 2020-12-11 15:16
  * @Version: 1.0
+ *
+ * 编码器
  */
 public class NettyEncoderHandler extends MessageToByteEncoder {
 

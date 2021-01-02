@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit;
  * @Author: milkteazzz
  * @Data: 2020-12-11 19:28
  * @Version: 1.0
+ *
+ * 保存及操作返回结果的数据容器类
  */
 public class RevokerResponseHolder {
 

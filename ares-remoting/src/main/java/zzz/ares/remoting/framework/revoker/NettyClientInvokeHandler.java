@@ -9,6 +9,8 @@ import zzz.ares.remoting.framework.model.RevokerResponseHolder;
  * @Author: milkteazzz
  * @Data: 2020-12-11 19:41
  * @Version: 1.0
+ *
+ * 获取 Netty 异步调用返回的结果
  */
 public class NettyClientInvokeHandler extends SimpleChannelInboundHandler<AresResponse> {
 
