@@ -10,6 +10,8 @@ import java.util.List;
  * @Author: milkteazzz
  * @Data: 2020-12-11 9:36
  * @Version: 1.0
+ *
+ * 服务治理接口
  */
 public interface IRegisterCenter4Governance {
 

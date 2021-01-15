@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @Data: 2020-12-14 12:48
  * @Version: 1.0
  *
- * 软负载加权轮询算法
+ * 软负载加权轮询算法实现
  */
 public class WeightPollingClusterStrategyImpl implements ClusterStrategy {
 

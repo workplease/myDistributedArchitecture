@@ -20,6 +20,8 @@ import zzz.ares.remoting.framework.serialization.common.SerializeType;
  * @Author: milkteazzz
  * @Data: 2020-12-05 22:35
  * @Version: 1.0
+ *
+ * Netty 服务端
  */
 public class NettyServer {
 

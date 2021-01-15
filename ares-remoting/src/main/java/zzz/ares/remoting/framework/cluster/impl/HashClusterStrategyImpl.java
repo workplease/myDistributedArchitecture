@@ -11,7 +11,7 @@ import java.util.List;
  * @Data: 2020-12-14 13:04
  * @Version: 1.0
  *
- * 软负载源地址 hash 算法
+ * 软负载源地址 hash 算法实现
  */
 public class HashClusterStrategyImpl implements ClusterStrategy {
 

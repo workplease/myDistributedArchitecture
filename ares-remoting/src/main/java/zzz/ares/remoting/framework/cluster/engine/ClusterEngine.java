@@ -11,7 +11,7 @@ import java.util.Map;
  * @Data: 2020-12-14 13:15
  * @Version: 1.0
  *
- * 自定义软负载机制
+ * 自定义软负载机制策略引擎
  */
 public class ClusterEngine {
 
